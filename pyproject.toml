@@ -13,9 +13,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
- "mcp>=1.0.0",
- "opendal>=0.45.16,<0.46.0",
- "python-dotenv>=1.0.1",
+    "mcp>=1.0.0",
+    "opendal>=0.45.16,<0.46.0",
+    "python-dotenv>=1.0.1",
 ]
 
 [build-system]
@@ -23,7 +23,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.uv]
-dev-dependencies = ["ruff>=0.7.3"]
+dev-dependencies = ["pytest>=8.3.5", "pytest-asyncio>=0.25.3", "ruff>=0.7.3"]
 
 [project.scripts]
 mcp-server-opendal = "mcp_server_opendal:main"
