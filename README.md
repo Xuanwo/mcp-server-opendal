@@ -37,8 +37,5 @@ Then you can use tool like `read` and `list` with `mys3://path/to/file`.
 
 ```shell
 npx @modelcontextprotocol/inspector \
-  uv \
-  --directory . \
-  run \
-  mcp-server-opendal
+  uv run mcp-server-opendal
 ```

@@ -1,13 +1,13 @@
-import logging
-import base64
 import argparse
-from typing import Dict, Any
-from mcp_server_opendal.resource import OPENDAL_OPTIONS, OpendalResource, parse_uri
-from pydantic import AnyUrl
-from dotenv import load_dotenv
+import base64
+import logging
 import os
+from typing import Any, Dict
+
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
+from mcp_server_opendal.resource import OPENDAL_OPTIONS, OpendalResource, parse_uri
 
 load_dotenv()
 default_log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
@@ -76,7 +76,7 @@ async def opendal_resource(scheme: str, path: str) -> Dict[str, Any]:
                 "is_binary": True,
             }
     except Exception as e:
-        logger.error(f"Failed to read resource: {str(e)}")
+        logger.error(f"Failed to read resource: {e!s}")
         return {"error": str(e)}
 
 
@@ -94,7 +94,7 @@ async def list(uri: str) -> str:
     """
     logger.debug(f"Listing directory content: {uri}")
     try:
-        resource, path = parse_uri(AnyUrl(uri))
+        resource, path = parse_uri(uri)
 
         # Ensure directory path ends with a slash
         if path and not path.endswith("/"):
@@ -104,8 +104,8 @@ async def list(uri: str) -> str:
 
         return str(entries)
     except Exception as e:
-        logger.error(f"Failed to list directory content: {str(e)}")
-        return f"Error: {str(e)}"
+        logger.error(f"Failed to list directory content: {e!s}")
+        return f"Error: {e!s}"
 
 
 # Read content of file
@@ -122,11 +122,11 @@ async def read(uri: str) -> Dict[str, Any]:
     """
     logger.debug(f"Reading file content: {uri}")
     try:
-        resource, path = parse_uri(AnyUrl(uri))
+        resource, path = parse_uri(uri)
         # Directly call the resource function to get content
         return await opendal_resource(resource.scheme, path)
     except Exception as e:
-        logger.error(f"Failed to read file content: {str(e)}")
+        logger.error(f"Failed to read file content: {e!s}")
         return {"error": str(e)}
 
 
@@ -144,7 +144,7 @@ async def get_info(uri: str) -> str:
     """
     logger.debug(f"Getting file info: {uri}")
     try:
-        resource, path = parse_uri(AnyUrl(uri))
+        resource, path = parse_uri(uri)
         metadata = await resource.stat(path)
 
         result = f"File: {path}\n"
@@ -153,8 +153,8 @@ async def get_info(uri: str) -> str:
 
         return result
     except Exception as e:
-        logger.error(f"Failed to get file info: {str(e)}")
-        return f"Error: {str(e)}"
+        logger.error(f"Failed to get file info: {e!s}")
+        return f"Error: {e!s}"
 
 
 def main():
