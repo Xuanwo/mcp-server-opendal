@@ -1,12 +1,13 @@
 import logging
 import os
-from typing import List, Union, Tuple, Any
+from typing import Any, List, Tuple, Union
+
 import opendal
-from opendal import Entry, Metadata
-from opendal.layers import RetryLayer
-from pydantic import AnyUrl, Field
 from dotenv import load_dotenv
 from mcp.server.fastmcp.resources import Resource
+from opendal import Entry, Metadata
+from opendal.layers import RetryLayer
+from pydantic import Field
 
 logger = logging.getLogger("mcp_server_opendal")
 
@@ -54,7 +55,7 @@ class OpendalResource(Resource):
 
         # Initialize FastMCP Resource
         super().__init__(
-            uri=AnyUrl(f"{scheme}://"),
+            uri=f"{scheme}://",
             name=f"{scheme} storage",
             description=f"Storage service accessed via OpenDAL {scheme} protocol",
             mime_type="application/vnd.folder",  # for containers/directories
@@ -133,13 +134,14 @@ class OpendalResource(Resource):
         return any(path.lower().endswith(ext) for ext in text_extensions)
 
 
-def parse_uri(uri: AnyUrl) -> Tuple[OpendalResource, str]:
+def parse_uri(uri: str) -> Tuple[OpendalResource, str]:
     """Parse a URI into a resource and path"""
-    from urllib.parse import unquote
+    from urllib.parse import unquote, urlparse
 
     logger.debug(f"Parsing URI: {uri}")
+    parsed = urlparse(uri)
 
-    scheme = uri.scheme
-    path = str(uri)[len(scheme) + 3 :]  # Remove "{scheme}://"
+    scheme = parsed.scheme
+    path = parsed.netloc + parsed.path
     path = unquote(path)  # Decode URL-encoded characters
     return (OpendalResource(scheme), path)

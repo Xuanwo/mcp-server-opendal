@@ -22,8 +22,29 @@ dependencies = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-dev-dependencies = ["pytest>=8.3.5", "pytest-asyncio>=0.25.3", "ruff>=0.7.3"]
+[dependency-groups]
+dev = ["pytest>=8.3.5", "pytest-asyncio>=0.25.3", "ruff>=0.7.3"]
 
 [project.scripts]
 mcp-server-opendal = "mcp_server_opendal:main"
+
+[tool.ruff]
+line-length = 88
+src = ["src"]
+exclude = ["tests/fixtures"]
+target-version = "py312"
+
+[tool.ruff.lint]
+extend-select = [
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "PGH",  # pygrep-hooks
+    "RUF",  # ruff
+    "W",    # pycodestyle
+    "YTT",  # flake8-2020
+]
+extend-ignore = ["B018", "B019", "B905"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
