@@ -1,185 +1,179 @@
-import asyncio
-from mcp.server.models import InitializationOptions
-from mcp.server import NotificationOptions, Server
-import mcp.server.stdio
 import logging
-from mcp.types import (
-    LoggingLevel,
-    EmptyResult,
-    Tool,
-    TextContent,
-    ImageContent,
-    EmbeddedResource,
-)
-
 import base64
-from .resource import parse_uri
+import argparse
+from typing import Dict, Any
+from mcp_server_opendal.resource import OPENDAL_OPTIONS, OpendalResource, parse_uri
 from pydantic import AnyUrl
+from dotenv import load_dotenv
+import os
+from mcp.server.fastmcp import FastMCP
 
 
-# Initialize server
-server = Server("opendal_service")
+load_dotenv()
+default_log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
+log_level = getattr(logging, default_log_level, logging.INFO)
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
+# Initialize the FastMCP server - Use the default log level
+mcp = FastMCP("opendal_service", log_level=default_log_level)
+
+# Configure logging - still use numeric constants to configure standard logging
+logging.basicConfig(level=log_level)
 logger = logging.getLogger("mcp_server_opendal")
 
 
-@server.set_logging_level()
-async def set_logging_level(level: LoggingLevel) -> EmptyResult:
-    logger.setLevel(level.lower())
-    await server.request_context.session.send_log_message(
-        level="info", data=f"Log level set to {level}", logger="mcp_server_opendal"
-    )
-    return EmptyResult()
+def register_resources():
+    """Register all OpenDAL resources"""
+    # Get all available schemes
+    schemes = set([k.split("_")[0] for k in OPENDAL_OPTIONS.keys()])
+
+    # Clean existing resources and register new resources
+    for scheme in schemes:
+        try:
+            resource = OpendalResource(scheme)
+            mcp.add_resource(resource)
+            logger.info(f"Registered OpenDAL resource for scheme: {scheme}")
+        except Exception as e:
+            logger.error(
+                f"Failed to register OpenDAL resource for scheme {scheme}: {e}"
+            )
 
 
-# @server.list_resources()
-# async def list_resources() -> List[Resource]:
-#     logger.debug("Starting to list resources")
-#     resources = []
-
-#     schemes = set([k.split("_")[0] for k in OPENDAL_OPTIONS.keys()])
-#     logger.debug(f"Schemes: {schemes}")
-
-#     for scheme in schemes:
-#         resource = OpendalResource(scheme)
-#         resources.append(resource)
-
-#     logger.info(f"Returning {len(resources)} resources")
-#     return resources
+# Register resources
+register_resources()
 
 
-# @server.read_resource()
-# async def read_resource(uri: AnyUrl) -> str:
-#     """
-#     Read content from an opendal resource and return structured response
+# Create a resource template, used to dynamically generate resources
+@mcp.resource("{scheme}://{path}")
+async def opendal_resource(scheme: str, path: str) -> Dict[str, Any]:
+    """
+    Access files in OpenDAL service
 
-#     Returns:
-#         Dict containing 'contents' list with uri, mimeType, and text for each resource
-#     """
-#     uri_str = str(uri)
-#     logger.debug(f"Reading resource: {uri_str}")
+    Args:
+        scheme: storage service scheme
+        path: file path
 
-#     resource, path = parse_uri(uri)
-
-#     logger.debug(f"Attempting to read - scheme: {resource.scheme()}, path: {path}")
-
-#     metadata = await resource.stat(path)
-#     logger.debug(f"Path: {path} - Metadata: {metadata}")
-
-#     data = await resource.read(path)
-
-#     # Process the data based on file type
-#     if resource.is_text_file(path):
-#         result = ReadResourceResult(
-#             contents=[
-#                 TextResourceContents(
-#                     text=data.decode("utf-8"),
-#                     uri=uri_str,
-#                     mimeType=metadata.content_type,
-#                 )
-#             ]
-#         )
-#     else:
-#         result = ReadResourceResult(
-#             contents=[
-#                 BlobResourceContents(
-#                     blob=str(base64.b64encode(data)),
-#                     uri=uri_str,
-#                     mimeType=metadata.content_type,
-#                 )
-#             ]
-#         )
-
-#     logger.debug(result)
-#     return result
-
-
-@server.list_tools()
-async def handle_list_tools() -> list[Tool]:
-    return [
-        Tool(
-            name="list",
-            description="Returns some or all of the files in an opendal service.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "uri": {
-                        "type": "string",
-                        "description": "The URI of the resource to list. For example, mys3://path/to/dir",
-                    },
-                },
-                "required": ["uri"],
-            },
-        ),
-        Tool(
-            name="read",
-            description="Reads the contents of a file from an opendal service.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "uri": {
-                        "type": "string",
-                        "description": "The URI of the resource to list. For example, mys3://path/to/file",
-                    },
-                },
-                "required": ["uri"],
-            },
-        ),
-    ]
-
-
-@server.call_tool()
-async def handle_call_tool(
-    name: str, arguments: dict | None
-) -> list[TextContent | ImageContent | EmbeddedResource]:
-    logger.debug(f"Handling call tool: {name} with arguments: {arguments}")
-
-    resource, path = parse_uri(AnyUrl(arguments["uri"]))
-
+    Returns:
+        Dictionary containing file content and metadata
+    """
+    logger.debug(f"Reading template resource content: {scheme}://{path}")
     try:
-        match name:
-            case "list":
-                logger.debug(
-                    f"Attempting to list - scheme: {resource.scheme}, path: {path}"
-                )
+        resource = OpendalResource(scheme)
+        data = await resource.read_path(path)
+        metadata = await resource.stat(path)
 
-                files = await resource.list(path)
-                return [TextContent(type="text", text=str(files))]
-            case "read":
-                logger.debug(
-                    f"Attempting to read - scheme: {resource.scheme}, path: {path}"
-                )
-
-                data = await resource.read(path)
-                # Process the data based on file type
-                if resource.is_text_file(path):
-                    file_content = data.decode("utf-8")
-                else:
-                    file_content = str(base64.b64encode(data))
-
-                return [TextContent(type="text", text=str(file_content))]
-    except Exception as error:
-        return [TextContent(type="text", text=f"Error: {str(error)}")]
+        if resource.is_text_file(path):
+            return {
+                "content": data.decode("utf-8"),
+                "mime_type": metadata.content_type or "text/plain",
+                "size": metadata.content_length,
+                "is_binary": False,
+            }
+        else:
+            return {
+                "content": base64.b64encode(data).decode("ascii"),
+                "mime_type": metadata.content_type or "application/octet-stream",
+                "size": metadata.content_length,
+                "is_binary": True,
+            }
+    except Exception as e:
+        logger.error(f"Failed to read resource: {str(e)}")
+        return {"error": str(e)}
 
 
-async def main():
-    # Run the server using stdin/stdout streams
-    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-        await server.run(
-            read_stream,
-            write_stream,
-            InitializationOptions(
-                server_name="mcp-server-opendal",
-                server_version="0.1.0",
-                capabilities=server.get_capabilities(
-                    notification_options=NotificationOptions(),
-                    experimental_capabilities={},
-                ),
-            ),
-        )
+# Modify the list tool to ensure the path ends with a slash
+@mcp.tool()
+async def list(uri: str) -> str:
+    """
+    List files in OpenDAL service
+
+    Args:
+        uri: resource URI, e.g. mys3://path/to/dir
+
+    Returns:
+        String containing directory content
+    """
+    logger.debug(f"Listing directory content: {uri}")
+    try:
+        resource, path = parse_uri(AnyUrl(uri))
+
+        # Ensure directory path ends with a slash
+        if path and not path.endswith("/"):
+            path = path + "/"
+
+        entries = await resource.list(path)
+
+        return str(entries)
+    except Exception as e:
+        logger.error(f"Failed to list directory content: {str(e)}")
+        return f"Error: {str(e)}"
+
+
+# Read content of file
+@mcp.tool()
+async def read(uri: str) -> Dict[str, Any]:
+    """
+    Read file content from OpenDAL service
+
+    Args:
+        uri: resource URI, e.g. mys3://path/to/file
+
+    Returns:
+        File content or error information
+    """
+    logger.debug(f"Reading file content: {uri}")
+    try:
+        resource, path = parse_uri(AnyUrl(uri))
+        # Directly call the resource function to get content
+        return await opendal_resource(resource.scheme, path)
+    except Exception as e:
+        logger.error(f"Failed to read file content: {str(e)}")
+        return {"error": str(e)}
+
+
+# Get file metadata
+@mcp.tool()
+async def get_info(uri: str) -> str:
+    """
+    Get metadata of file in OpenDAL service
+
+    Args:
+        uri: resource URI, e.g. mys3://path/to/file
+
+    Returns:
+        File metadata information
+    """
+    logger.debug(f"Getting file info: {uri}")
+    try:
+        resource, path = parse_uri(AnyUrl(uri))
+        metadata = await resource.stat(path)
+
+        result = f"File: {path}\n"
+        result += f"Size: {metadata.content_length} bytes\n"
+        result += f"Type: {metadata.content_type}\n"
+
+        return result
+    except Exception as e:
+        logger.error(f"Failed to get file info: {str(e)}")
+        return f"Error: {str(e)}"
+
+
+def main():
+    parser = argparse.ArgumentParser(description="OpenDAL MCP server")
+    parser.add_argument(
+        "--transport",
+        type=str,
+        choices=["stdio", "sse"],
+        default="stdio",
+        help="Transport method (stdio or sse)",
+    )
+
+    args = parser.parse_args()
+
+    if args.transport == "sse":
+        mcp.run("sse")
+    else:
+        mcp.run("stdio")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

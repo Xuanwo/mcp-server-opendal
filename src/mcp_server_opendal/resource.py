@@ -1,11 +1,12 @@
 import logging
 import os
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Any
 import opendal
 from opendal import Entry, Metadata
 from opendal.layers import RetryLayer
-from pydantic import AnyUrl
+from pydantic import AnyUrl, Field
 from dotenv import load_dotenv
+from mcp.server.fastmcp.resources import Resource
 
 logger = logging.getLogger("mcp_server_opendal")
 
@@ -18,9 +19,10 @@ OPENDAL_OPTIONS = {
 }
 
 
-class OpendalResource:
+class OpendalResource(Resource):
     """
     OpenDAL Resource provider that handles interactions with different storage services.
+    Acts both as a FastMCP Resource and as an interface to OpenDAL operations.
 
     This resource provider will read the environment variables for the given scheme and use them to configure the opendal operator.
 
@@ -36,8 +38,12 @@ class OpendalResource:
     ```
     """
 
+    scheme: str = Field("", description="Storage scheme (e.g., s3, fs)")
+    op: Any = None
+
     def __init__(self, scheme: str):
         scheme = scheme.lower()
+        # Configure OpenDAL operator
         opendal_type = OPENDAL_OPTIONS.get(f"{scheme}_type")
         opendal_options = {
             k.replace(f"{scheme}_", ""): v
@@ -46,15 +52,35 @@ class OpendalResource:
         }
         logger.debug(f"Initializing OpendalResource with options: {opendal_options}")
 
+        # Initialize FastMCP Resource
+        super().__init__(
+            uri=AnyUrl(f"{scheme}://"),
+            name=f"{scheme} storage",
+            description=f"Storage service accessed via OpenDAL {scheme} protocol",
+            mime_type="application/vnd.folder",  # for containers/directories
+        )
+
+        # Initialize OpenDAL operator
         self.scheme = scheme
         self.op = opendal.AsyncOperator(opendal_type, **opendal_options).layer(
             RetryLayer()
         )
         logger.debug(f"Initialized OpendalResource: {self.op}")
 
+    async def read(self) -> str:
+        """
+        Read method for scheme-level resources, only returns descriptive information
+        Actual file content is obtained through path-specific methods
+        """
+        info = f"OpenDAL {self.scheme} storage resource.\n\n"
+        info += f"To access specific files, use: {self.scheme}://path/to/file\n"
+        info += f"To list directory contents, use the 'list' tool with: {self.scheme}://path/to/dir\n"
+        return info
+
     async def list(
         self, prefix: Union[str, os.PathLike], max_keys: int = 1000
     ) -> List[Entry]:
+        """List entries with the given prefix"""
         logger.debug(f"Listing entries with prefix: {prefix}")
 
         if max_keys <= 0:
@@ -72,11 +98,13 @@ class OpendalResource:
 
         return entries
 
-    async def read(self, path: Union[str, os.PathLike]) -> bytes:
+    async def read_path(self, path: Union[str, os.PathLike]) -> bytes:
+        """Read content from a specific path"""
         logger.debug(f"Reading path: {path}")
         return await self.op.read(path)
 
     async def stat(self, path: Union[str, os.PathLike]) -> Metadata:
+        """Get metadata for a specific path"""
         logger.debug(f"Statting path: {path}")
         return await self.op.stat(path)
 
