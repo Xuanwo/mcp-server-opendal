@@ -13,10 +13,15 @@ load_dotenv()
 
 # To run this example, you need to have a MCP server running.
 # You can start a MCP server by running `mcp-server-opendal` in the root directory.
-# With the following command:
+#
+# And set the environment variables first.
+# - OPENDAL_FS_TYPE=fs
+# - OPENDAL_FS_ROOT=./examples/
+#
+# Then, run the following command:
 #
 # ```bash
-# python ./src/main.py --transport sse
+# python ./src/mcp_server_opendal/server.py --transport sse
 # ```
 #
 # And set the environment variables below.
@@ -25,10 +30,12 @@ load_dotenv()
 # - OPENAI_API_KEY: The API key of the OpenAI API
 # - OPENAI_MODEL: The model of the OpenAI API
 # - OPENAI_ENDPOINT: The endpoint of the OpenAI API
-
-
-# Set OpenAI API Key
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+#
+# Then, run the following command:
+#
+# ```bash
+# python examples/llamaindex-with-opendal-mcp.py
+# ```
 
 # MCP Server Connection Parameters
 MCP_HOST = os.getenv("MCP_HOST")
