@@ -24,7 +24,7 @@ logger = logging.getLogger("mcp_server_opendal")
 def register_resources():
     """Register all OpenDAL resources"""
     # Get all available schemes
-    schemes = set([k.split("_")[0] for k in OPENDAL_OPTIONS.keys()])
+    schemes = {k.split("_")[0] for k in OPENDAL_OPTIONS.keys()}
 
     # Clean existing resources and register new resources
     for scheme in schemes:

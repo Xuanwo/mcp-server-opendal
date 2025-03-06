@@ -24,6 +24,12 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = ["pytest>=8.3.5", "pytest-asyncio>=0.25.3", "ruff>=0.7.3"]
+examples = [
+    "llama-index>=0.12.22",
+    "llama-index-llms-openai-like>=0.3.4",
+    "llama-index-tools-mcp>=0.1.0",
+    "nest-asyncio>=1.6.0",
+]
 
 [project.scripts]
 mcp-server-opendal = "mcp_server_opendal:main"
