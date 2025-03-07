@@ -1,14 +1,3 @@
-# /// script
-# requires-python = ">=3.12"
-# dependencies = [
-#     "python-dotenv",
-#     "llama-index",
-#     "llama-index",
-#     "llama-index-llms-openai-like",
-#     "llama-index-tools-mcp"
-# ]
-# ///
-
 import asyncio
 import os
 
@@ -68,7 +57,7 @@ async def main():
     try:
         await handle_user_message("What is the main finding of the data?", agent)
     except Exception as e:
-        print(f"Unexpected error: {e}, {type(e)}")
+        print(f"Unexpected error: {type(e)}, {e}")
 
 
 if __name__ == "__main__":
