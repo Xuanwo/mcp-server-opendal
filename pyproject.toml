@@ -28,7 +28,6 @@ examples = [
     "llama-index>=0.12.22",
     "llama-index-llms-openai-like>=0.3.4",
     "llama-index-tools-mcp>=0.1.0",
-    "nest-asyncio>=1.6.0",
 ]
 
 [project.scripts]

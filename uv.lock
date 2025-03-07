@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.12"
 
 [[package]]
@@ -451,21 +452,21 @@ wheels = [
 
 [[package]]
 name = "llama-cloud"
-version = "0.1.13"
+version = "0.1.14"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "httpx" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fd/01/5871921d95644931f6f8e23e10ab2367fd342427f8d50c189a2f960b3ef4/llama_cloud-0.1.13.tar.gz", hash = "sha256:cb6522fbd0f5e4c1cd2825e70bb943d0d8916816e232a5ce3be3a7272f329a8c", size = 94108 }
+sdist = { url = "https://files.pythonhosted.org/packages/4b/2d/d7ab93021d3fa090f1222190c820285d5f8c501c3814e07b8b9a2cbc7c83/llama_cloud-0.1.14.tar.gz", hash = "sha256:90741a19ba96967fa2484084928e326ae957736780a15b67bc3ad5f52e94782d", size = 97004 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ed/e8/e9c47f623a3bd152d47e970ca2647f0080dbdc406153ce21533fad44a575/llama_cloud-0.1.13-py3-none-any.whl", hash = "sha256:c36d9e9288cb7298faae68797f9789615b7c72409af8f3315e3098a479c09e17", size = 253383 },
+    { url = "https://files.pythonhosted.org/packages/c2/44/04b9a9588fbed8e25aa17189fff0c18d64629f6488c4640604bb243fb2ed/llama_cloud-0.1.14-py3-none-any.whl", hash = "sha256:187672847dedc018b4d2620a8d26d6bf213e425e8b91569773de48e5c2f3ca5a", size = 261697 },
 ]
 
 [[package]]
 name = "llama-cloud-services"
-version = "0.6.3"
+version = "0.6.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -474,9 +475,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1b/6d/3435d32cb9c6de07edf263a9928c98889fd5172bf3896df694098cef15eb/llama_cloud_services-0.6.3.tar.gz", hash = "sha256:015a5830907dc871b77ba628d1ef1d720834bfa4777c0cb821509462cdaf76aa", size = 24506 }
+sdist = { url = "https://files.pythonhosted.org/packages/94/84/46447ae1292742da4fcdb8a6e8eac3c4bbdf3f66940781a6c77e3dc3243a/llama_cloud_services-0.6.4.tar.gz", hash = "sha256:18ba8c7ebd015468b34f7cdb6f3e655c55bdda67ab520673daa4ab7d6e551592", size = 24555 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/77/1c76b4cb2c44c33dec804dac32d4b75e66c451640c1ba0486c5d9f94ebf8/llama_cloud_services-0.6.3-py3-none-any.whl", hash = "sha256:5db136268781151f318ee9bcb84c7bc7ea4a9f1b4577d4d003c5864d1c54d1af", size = 28550 },
+    { url = "https://files.pythonhosted.org/packages/39/2e/8d1889bea33a1c7ec68773299be8a8b7b8d7c9c2f8b30590b817124303af/llama_cloud_services-0.6.4-py3-none-any.whl", hash = "sha256:5586b082f21ef28ca0c5888c11a6da501a355be9d21760a36796df376d20fcfb", size = 28609 },
 ]
 
 [[package]]
@@ -702,14 +703,14 @@ wheels = [
 
 [[package]]
 name = "llama-parse"
-version = "0.6.2"
+version = "0.6.4.post1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "llama-cloud-services" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ed/25/64268078f09cee293cb2e1498f733c378feeb7cf7d5d9ef3444f226f05c7/llama_parse-0.6.2.tar.gz", hash = "sha256:5797452f2e535f886c175d19f41ce6b89cd51b190d3a8536b64a4f9dabeb8573", size = 3679 }
+sdist = { url = "https://files.pythonhosted.org/packages/21/af/f0062356f2ba1f32ba26d6f1c35b4f342878db29664efc62093cd2b0193f/llama_parse-0.6.4.post1.tar.gz", hash = "sha256:846d9959f4e034f8d9681dd1f003d42f8d7dc028d394ab04867b59046b4390d6", size = 3685 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d1/dc/b78717e1c1251cf1b7419e24c8d60d66a5732d5db47393e02f3f63ae5e86/llama_parse-0.6.2-py3-none-any.whl", hash = "sha256:184f871858ffc15cf46c3c36e60b54cd81d014a86db97b31bfc1d8a890459e02", size = 4842 },
+    { url = "https://files.pythonhosted.org/packages/77/d5/9e360e31fb5852842c434043c2a7ba6714a363546b5adeedff537fae5e0d/llama_parse-0.6.4.post1-py3-none-any.whl", hash = "sha256:fdc7adb87283c2f952c830d9057c156a1349c1e6e04444d7466e732903fbc150", size = 4902 },
 ]
 
 [[package]]
@@ -763,7 +764,6 @@ examples = [
     { name = "llama-index" },
     { name = "llama-index-llms-openai-like" },
     { name = "llama-index-tools-mcp" },
-    { name = "nest-asyncio" },
 ]
 
 [package.metadata]
@@ -783,7 +783,6 @@ examples = [
     { name = "llama-index", specifier = ">=0.12.22" },
     { name = "llama-index-llms-openai-like", specifier = ">=0.3.4" },
     { name = "llama-index-tools-mcp", specifier = ">=0.1.0" },
-    { name = "nest-asyncio", specifier = ">=1.6.0" },
 ]
 
 [[package]]
