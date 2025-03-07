@@ -1,6 +1,5 @@
 [project]
 name = "mcp-server-opendal"
-version = "0.1.0"
 description = "A Model Context Protocol server providing tools to access storage services for usage by LLMs"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -17,9 +16,10 @@ dependencies = [
     "opendal>=0.45.16,<0.46.0",
     "python-dotenv>=1.0.1",
 ]
+dynamic = ["version"]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs>=0.3.0"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
@@ -32,6 +32,13 @@ examples = [
 
 [project.scripts]
 mcp-server-opendal = "mcp_server_opendal:main"
+
+[tool.hatch.version]
+source = "vcs"
+fallback-version = "0.0.0"
+
+[tool.hatch.build.targets.sdist]
+only-include = ["src/", "examples/", "tests/"]
 
 [tool.ruff]
 line-length = 88
