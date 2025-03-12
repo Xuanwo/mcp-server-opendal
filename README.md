@@ -1,6 +1,10 @@
 # Model Context Protocol Server for Apache OpenDAL™
 A Model Context Protocol (MCP) server implementation that provides access to various storage services via [Apache OpenDAL™](https://opendal.apache.org/).
 
+<a href="https://glama.ai/mcp/servers/pwpk8kdcom">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/pwpk8kdcom/badge" alt="Server for Apache OpenDAL™ MCP server" />
+</a>
+
 [![PyPI - Version](https://img.shields.io/pypi/v/mcp-server-opendal)](https://pypi.org/project/mcp-server-opendal/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mcp-server-opendal)](https://pypi.org/project/mcp-server-opendal/)
 [![Lint and Test](https://github.com/Xuanwo/mcp-server-opendal/actions/workflows/test.yml/badge.svg)](https://github.com/Xuanwo/mcp-server-opendal/actions/workflows/test.yml)
