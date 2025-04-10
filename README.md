@@ -18,7 +18,29 @@ A Model Context Protocol (MCP) server implementation that provides access to var
 pip install mcp-server-opendal
 ```
 
-## Usage
+## Usage with Claude Desktop
+
+Add the following to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "opendal": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-opendal"
+      ],
+      "env": {
+        "YOUR_ENV_VAR": "YOUR_ENV_VALUE"
+      }
+    }
+  }
+}
+```
+
+It requires `uv` to be installed on your machine. Check the [official documentation](https://docs.astral.sh/uv/getting-started/installation/) for installation guides.
+
+## Environment variables
 
 Configure storage services by setting environment variables. Each service requires a prefix and specific configuration options.
 
