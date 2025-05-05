@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/xuanwo-mcp-server-opendal-badge.png)](https://mseep.ai/app/xuanwo-mcp-server-opendal)
+
 # Model Context Protocol Server for Apache OpenDAL™
 A Model Context Protocol (MCP) server implementation that provides access to various storage services via [Apache OpenDAL™](https://opendal.apache.org/).
 
