@@ -1,0 +1,62 @@
+[project]
+name = "mcp-server-opendal"
+description = "A Model Context Protocol server providing tools to access storage services for usage by LLMs"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "mcp>=1.0.0",
+    "opendal>=0.45.16,<0.46.0",
+    "python-dotenv>=1.0.1",
+]
+dynamic = ["version"]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs>=0.3.0"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["pytest>=8.3.5", "pytest-asyncio>=0.25.3", "ruff>=0.7.3"]
+examples = [
+    "llama-index>=0.12.22",
+    "llama-index-llms-openai-like>=0.3.4",
+    "llama-index-tools-mcp>=0.1.0",
+]
+
+[project.scripts]
+mcp-server-opendal = "mcp_server_opendal:main"
+
+[tool.hatch.version]
+source = "vcs"
+fallback-version = "0.0.0"
+
+[tool.hatch.build.targets.sdist]
+only-include = ["src/", "examples/", "tests/"]
+
+[tool.ruff]
+line-length = 88
+src = ["src"]
+exclude = ["tests/fixtures"]
+target-version = "py312"
+
+[tool.ruff.lint]
+extend-select = [
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "PGH",  # pygrep-hooks
+    "RUF",  # ruff
+    "W",    # pycodestyle
+    "YTT",  # flake8-2020
+]
+extend-ignore = ["B018", "B019", "B905"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10

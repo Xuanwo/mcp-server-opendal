@@ -5,6 +5,8 @@ A Model Context Protocol (MCP) server implementation that provides access to var
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mcp-server-opendal)](https://pypi.org/project/mcp-server-opendal/)
 [![Lint and Test](https://github.com/Xuanwo/mcp-server-opendal/actions/workflows/test.yml/badge.svg)](https://github.com/Xuanwo/mcp-server-opendal/actions/workflows/test.yml)
 
+[![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/Xuanwo/mcp-server-opendal)](https://archestra.ai/mcp-catalog/xuanwo__mcp-server-opendal)
+
 ## Features
 
 - Seamless access to multiple storage services including S3, Azure Blob Storage, Google Cloud Storage, and more
