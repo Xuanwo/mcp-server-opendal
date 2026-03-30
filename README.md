@@ -12,6 +12,10 @@ A Model Context Protocol (MCP) server implementation that provides access to var
 - Read file contents with automatic text/binary detection
 - Environment variable based configuration
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/xuanwo-mcp-server-opendal).
+
 ## Installation
 
 ```shell
